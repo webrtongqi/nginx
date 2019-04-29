@@ -1,0 +1,58 @@
+server {
+        listen       80;
+        server_name  opentest.51kupai.com 10.207.10.117;
+
+        root   E:/rongtongqi_kupai/dramaQueen-h5s;
+        index  index.html index.htm index.php;
+        
+        location / {
+		  try_files $uri $uri/ /drama/index.html;
+		}
+        location ^~ /app/{
+            proxy_pass  http://bkapi.51kupai.com;
+            proxy_set_header Host bkapi.51kupai.com;
+        }   
+        location ^~ /receive{
+            proxy_pass  http://h5.offerchance.com;
+            proxy_set_header Host h5.offerchance.com;
+        }
+		location ^~ /api/{
+           proxy_pass  http://testmobile.51kupai.com;
+           proxy_set_header Host testmobile.51kupai.com;
+        }
+        location ^~ /upload/uploadPic{
+            proxy_pass  http://192.168.31.111:8081;
+            proxy_set_header Host 192.168.31.111:8081;
+        }
+		location ~  \.api$ {
+           proxy_pass  http://192.168.31.127:8080;
+           proxy_set_header Host 192.168.31.127:8080;
+        }
+		location ^~ /lenongshe/{
+           proxy_pass  http://192.168.31.127:8080;
+           proxy_set_header Host 192.168.31.127:8080;
+        
+		location ^~ /dramaqueen/{
+           proxy_pass  http://test-sales-treasurecollect.51kupai.com/java/dramaqueen/;
+           proxy_set_header Host test-sales-treasurecollect.51kupai.com;
+        }		
+		#location = /home/signpackage {
+        #    proxy_pass  http://testmobile.51kupai.com;
+        #    proxy_set_header Host testmobile.51kupai.com;
+        #}
+		
+		###同步拍
+		#location ^~ /lenong/ {
+		#	rewrite ^/(.*)$ $scheme://$server_name/ permanent;
+		#}
+		
+        location ~ ^/\.(.*)/ {
+            deny all;
+
+        }   
+        location = /favicon.ico {
+            log_not_found off;
+            access_log off;
+
+        }
+    }

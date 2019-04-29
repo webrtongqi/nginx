@@ -1,0 +1,46 @@
+server {
+        listen       80;
+        server_name  dev.ah.51kupai.com 192.168.37.23;
+
+        root   E:/rongtongqi_kupai/ah-51kupai-com/public;
+        index  index.html index.htm index.php;
+        	underscores_in_headers on;
+        location / { 
+			try_files $uri $uri/ /index.php?$query_string;
+		}
+		location /wxmp/ {
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header Host $http_host;
+            proxy_pass http://192.168.31.115:8080;
+        }   
+
+		location ^~ /kupai/{
+            proxy_pass  http://192.168.31.111:8085;
+            proxy_set_header Host 192.168.31.111:8085;
+			
+        }
+		location ^~ /kpH5GetHistoryMessage{
+            proxy_pass  http://192.168.31.123:8998;
+        }
+		location ^~ /delRoomMessage{
+            proxy_pass  http://192.168.31.123:8998;
+        }
+		location ~ .*\.(php|php5)?$
+		{   
+			try_files $uri =404;
+			#fastcgi_pass unix:/tmp/php-fpm.sock;
+			fastcgi_pass 127.0.0.1:9000;
+			fastcgi_index index.php;
+			include fastcgi.conf;
+		}
+
+        location ~ ^/\.(.*)/ {
+            deny all;
+
+        }   
+        location = /favicon.ico {
+            log_not_found off;
+            access_log off;
+
+        }
+    }

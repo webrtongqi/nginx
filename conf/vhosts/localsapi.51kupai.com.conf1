@@ -1,0 +1,44 @@
+server {
+        listen       80;
+        server_name  opentest.51kupai.com 192.168.36.197;
+
+        root   E:/rongtongqi_kupai/lenong_h5;
+        index  index.html index.htm index.php;
+        
+        #location / {
+        #    try_files $uri $uri/ $uri/index.html;
+        #    autoindex on;
+        #}
+		location / {
+			try_files $uri $uri/ /index.html;
+		}
+        location ^~ /api/{
+            proxy_pass  http://192.168.31.127:8080;
+            proxy_set_header Host 192.168.31.127:8080;
+        }
+		#location ^~ /lenong/{
+        #    proxy_pass  http://192.168.31.127:8080;
+        #    proxy_set_header Host 192.168.31.127:8080;
+        #}   
+		#location = /home/signpackage {
+        #    proxy_pass  http://mobile.51kupai.com;
+        #    proxy_set_header Host mobile.51kupai.com;
+        #}
+		
+		###同步拍
+		location ^~ /mobile/html/brand_details.html {
+			if ( $query_string ~* ^(.*)classId=(87)(.*)$ ){
+				rewrite ^/(.*)$ $scheme://$server_name/mobile/html/sync_auction.html permanent;
+			}
+		}
+		
+        location ~ ^/\.(.*)/ {
+            deny all;
+
+        }   
+        location = /favicon.ico {
+            log_not_found off;
+            access_log off;
+
+        }
+    }
